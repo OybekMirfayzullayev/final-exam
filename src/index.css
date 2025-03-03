@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+
+.login_page{
+  width: 100%;
+  background-image: url(./img/bg.png);
+  object-fit: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
