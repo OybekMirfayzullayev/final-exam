@@ -12,6 +12,7 @@ import {
   SettingOutlined,
   DownOutlined,
 } from "@ant-design/icons";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const menu = (
@@ -21,11 +22,14 @@ const menu = (
 );
 
 export default function () {
+  const navigate = useNavigate();
   return (
     <>
       <div className="w-2/12 h-screen fixed left-0">
         <div className="w-full h-[70px] flex justify-center items-center border-r border-b border-gray-100 ">
+          <Link to={"/"}>
           <img src={Myday} alt="MyDay" className="w-[170px]" />
+          </Link>
         </div>
 
         <div className="flex items-center pl-5 h-[70px] gap-3 border-r border-gray-100">
@@ -47,13 +51,13 @@ export default function () {
 
         <div className="w-[254px]">
           <Menu mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="1" icon={<AppstoreOutlined />}>
+            <Menu.Item key="1" icon={<AppstoreOutlined />} onClick={() => navigate("/")}>
               Dashboard
             </Menu.Item>
-            <Menu.Item key="2" icon={<SolutionOutlined />}>
+            <Menu.Item key="2" icon={<SolutionOutlined />} onClick={() => navigate("/leads")}>
               Leads
             </Menu.Item>
-            <Menu.Item key="3" icon={<UserOutlined />}>
+            <Menu.Item key="3" icon={<UserOutlined />} onClick={() => navigate("/clients")}>
               Clients
             </Menu.Item>
             <Menu.Item key="4" icon={<TeamOutlined />}>

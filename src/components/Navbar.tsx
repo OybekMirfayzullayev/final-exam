@@ -29,7 +29,7 @@ export default function Navbar() {
 
   const menu = (
     <Menu className="w-48 shadow-lg rounded-lg">
-      <Menu.Item icon={<UserOutlined />} key="profile">
+      <Menu.Item icon={<UserOutlined />} key="profile" onClick={() => navigate("/my-profile")}>
         My profile
       </Menu.Item>
       <Menu.Item icon={<CreditCardOutlined />} key="billing">
@@ -38,7 +38,7 @@ export default function Navbar() {
       <Menu.Item icon={<MessageOutlined />} key="support">
         Technique support
       </Menu.Item>
-      <Menu.Item icon={<SettingOutlined />} key="settings">
+      <Menu.Item icon={<SettingOutlined />} key="settings" onClick={() => navigate("/my-profile")} >
         Settings
       </Menu.Item>
       <Menu.Divider />
@@ -73,7 +73,7 @@ export default function Navbar() {
               viewBox="0 0 20 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="hover:text-blue-600"
+              className="hover:text-blue-600 duration-200"
             >
               <path
                 d="M14.037 6.62963L18.6667 2M18.6667 2H14.037M18.6667 2V6.62963M6.62963 6.62963L2 2M2 2L2 6.62963M2 2L6.62963 2M6.62963 14.037L2 18.6667M2 18.6667H6.62963M2 18.6667L2 14.037M14.037 14.037L18.6667 18.6667M18.6667 18.6667V14.037M18.6667 18.6667H14.037"

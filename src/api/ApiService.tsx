@@ -23,7 +23,17 @@ export const ApiClient = createApi({
         getUser: builder.query({
             query: () => "/api/v1/user/me/",
         }),
+        updateUser: builder.mutation({
+            query: (userData) => ({
+              url: "/api/v1/user/me/",
+              method: "PUT",
+              body: userData,
+            }),
+        }),
+        getLeadList: builder.query({
+            query: () => "/api/v1/lead/list/?size=30",
+        })
     }),
 });
 
-export const { useLoginMutation, useGetUserQuery } = ApiClient;
+export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery } = ApiClient;

@@ -184,7 +184,8 @@ export default function MainPage() {
           </div>
 
         <div className="w-full h-[320px] flex items-center justify-start gap-4">
-          <div className="w-[295px] h-[305px] rounded-lg bg-white flex justify-center items-center">
+          <div className="w-[295px] h-[305px] rounded-lg bg-white flex flex-col justify-center items-center relative">
+          <h1 className="absolute top-2 left-4 text-[#334D6E] font-semibold">Payment status</h1>
             <Chart
               options={options}
               series={series}
@@ -193,7 +194,8 @@ export default function MainPage() {
             />
           </div>
           
-          <div className="w-[609px] h-[305px] rounded-lg bg-white flex items-center justify-center">
+          <div className="w-[609px] h-[305px] rounded-lg bg-white flex items-center justify-center flex-col relative">
+            {/* <h1 className="absolute top-0.5 left-3.5 text-[14px] font-semibold text-[#334D6E]">Monthly financial indicators</h1> */}
             <Chart
               options={barOptions}
               series={barSeries}
@@ -311,9 +313,10 @@ export default function MainPage() {
           </div>
         </div>
 
-        <div className="w-full h-[500px]">
 
-        </div>
+        {/* <div className="w-full h-[500px]">
+
+        </div> */}
 
 
       </div>
