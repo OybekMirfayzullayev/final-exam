@@ -27,9 +27,6 @@ interface Lead {
   phone: string;
 }
 
-interface ApiResponse {
-  results: Lead[];
-}
 
 interface LeadListProps {
   status: number;
@@ -37,8 +34,8 @@ interface LeadListProps {
 }
 
 const LeadList: FC<LeadListProps> = ({ status, title }) => {
-  const { data, isLoading, error } = useGetLeadListQuery<{ results: Lead[] }>();
-  // const { data, isLoading, error } = useGetLeadListQuery<ApiResponse>();
+  const { data, isLoading, error } = useGetLeadListQuery();
+
 
 
   if (isLoading) return <Flex> <Spin size="large"/> </Flex>;

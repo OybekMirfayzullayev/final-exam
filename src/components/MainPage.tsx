@@ -4,9 +4,10 @@ import { FaUserGroup } from "react-icons/fa6";
 import { FiUser } from "react-icons/fi";
 import { GiCoins } from "react-icons/gi";
 import Chart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
 export default function MainPage() {
-  const options = {
+  const options: ApexOptions = {
     chart: {
       type: "donut",
     },
@@ -35,21 +36,12 @@ export default function MainPage() {
 
   const series = [60, 40];
 
-  const barOptions = {
-    chart: {
-      type: "bar",
-    },
-    xaxis: {
-      categories: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AVG"],
-    },
+  const barOptions: ApexOptions = {
+    chart: {type: "bar",},
+    xaxis: {categories: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AVG"],},
     colors: ["#0057FF"],
-    dataLabels: {
-      enabled: false,
-    },
-    yaxis: {
-      labels: {
-        formatter: (val) => `${val.toLocaleString()} so’m`,
-      },
+    dataLabels: {enabled: false,},
+    yaxis: { labels: { formatter: (val: number) => `${val.toLocaleString()} so’m`, },
     },
   };
 
@@ -63,7 +55,7 @@ export default function MainPage() {
     },
   ];
 
-  const progressRed = {
+  const progressRed: ApexOptions = {
     chart: { type: "radialBar", sparkline: { enabled: true } },
     plotOptions: {
       radialBar: {
@@ -77,7 +69,7 @@ export default function MainPage() {
             fontWeight: "bold",
             color: "#333",
             offsetY: 6,
-            formatter: (val) => `${val}%`,
+            formatter: (val: number) => `${val}%`,
           },
         },
       },
@@ -85,10 +77,9 @@ export default function MainPage() {
     stroke: { lineCap: "round" },
     colors: ["#F7685B"],
   };
-
   const progressSeriesRed = [67];
 
-  const progressGreen = {
+  const progressGreen: ApexOptions = {
     chart: { type: "radialBar", sparkline: { enabled: true } },
     plotOptions: {
       radialBar: {
@@ -102,7 +93,7 @@ export default function MainPage() {
             fontWeight: "bold",
             color: "#333",
             offsetY: 6,
-            formatter: (val) => `${val}%`,
+            formatter: (val: number) => `${val}%`,
           },
         },
       },
@@ -110,10 +101,9 @@ export default function MainPage() {
     stroke: { lineCap: "round" },
     colors: ["#2ED47A"],
   };
-
   const progressSeriesGreen = [35];
 
-  const progressYellow = {
+  const progressYellow: ApexOptions = {
     chart: { type: "radialBar", sparkline: { enabled: true } },
     plotOptions: {
       radialBar: {
@@ -127,7 +117,7 @@ export default function MainPage() {
             fontWeight: "bold",
             color: "#333",
             offsetY: 6,
-            formatter: (val) => `${val}%`,
+            formatter: (val: number) => `${val}%`,
           },
         },
       },
@@ -135,7 +125,6 @@ export default function MainPage() {
     stroke: { lineCap: "round" },
     colors: ["#FFB946"],
   };
-
   const progressSeriesYellow = [21];
 
   return (

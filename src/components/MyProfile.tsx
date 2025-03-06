@@ -7,7 +7,7 @@ import { useGetUserQuery, useUpdateUserMutation } from "../api/ApiService";
 export default function MyProfile() {
   const [updateUser] = useUpdateUserMutation();
   const { data: userData, refetch } = useGetUserQuery({});
-  const BASE_URL = "https://test.api.mydays.uz";
+  
 
   const [formData, setFormData] = useState({
     firstName: "",
