@@ -7,7 +7,6 @@ import { useGetUserQuery, useUpdateUserMutation } from "../api/ApiService";
 export default function MyProfile() {
   const [updateUser] = useUpdateUserMutation();
   const { data: userData, refetch } = useGetUserQuery({});
-  
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -31,7 +30,7 @@ export default function MyProfile() {
 
 }, [userData]);
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -44,7 +43,7 @@ export default function MyProfile() {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
     try {
       await updateUser(formData).unwrap();

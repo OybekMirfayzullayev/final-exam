@@ -53,6 +53,14 @@ export default function Navbar() {
     </Menu>
   );
 
+  const handleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   return (
     <>
       <div className="w-10/12 h-[70px]  border-gray-100 flex items-center justify-between px-6 fixed top-0 right-0">
@@ -65,7 +73,7 @@ export default function Navbar() {
             className="w-[0px] bg-[#F3F4F7] rounded-lg"
           />
 
-          <button className="cursor-pointer mx-10">
+          <button className="cursor-pointer mx-10" onClick={handleFullScreen}>
             <svg
               width="21"
               height="21"

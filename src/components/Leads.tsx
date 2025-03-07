@@ -34,7 +34,7 @@ interface LeadListProps {
 }
 
 const LeadList: FC<LeadListProps> = ({ status, title }) => {
-  const { data, isLoading, error } = useGetLeadListQuery();
+  const { data, isLoading, error } = useGetLeadListQuery(undefined);
 
 
 

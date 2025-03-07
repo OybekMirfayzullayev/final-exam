@@ -1,13 +1,57 @@
 // import React from 'react'
-
-import { Button } from "antd";
+import { Button, Flex, Spin, Table, Tag } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import { useGetClientsQuery } from "../api/ApiService";
+import ErrorPage from "./ErrorPage";
 
 export default function Clients() {
+  const { data, error, isLoading } = useGetClientsQuery(undefined);
+
+  if (isLoading) return <Flex> <Spin size="large"/> </Flex>;
+  if (error) return <ErrorPage/> ;
+
+  const columns = [
+    { title: "Name", dataIndex: "full_name", key: "full_name" },
+    {
+      title: "Points",
+      dataIndex: "point",
+      key: "point",
+      render: (points: number) => `⭐ ${points} points`,
+    },
+    {
+      title: "Lesson",
+      dataIndex: "group_carts",
+      key: "group_carts",
+      render: (group_carts: { group_name: string }[]) =>
+        group_carts.length > 0
+          ? group_carts.map((g) => g.group_name).join(", ")
+          : "No lessons",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status: string) => <Tag color="green">{status}</Tag>,
+    },
+    {
+      title: "Study Date",
+      dataIndex: "group_carts",
+      key: "study_date",
+      render: (group_carts: { start_date: string }[]) =>
+        group_carts.length > 0 ? group_carts[0].start_date : "N/A",
+    },
+    {
+      title: "Phone Number",
+      dataIndex: "phone_number_1",
+      key: "phone_number_1",
+    },
+    { title: "Balance", dataIndex: "balance", key: "balance" },
+  ];
+
   return (
     <>
       <div className="space-y-4">
-        <div className="w-full h-[50px] border flex justify-end items-center">
+        <div className="w-full h-[50px] flex justify-end items-center">
           <Button
             type="primary"
             icon={<UserOutlined />}
@@ -17,63 +61,9 @@ export default function Clients() {
           </Button>
         </div>
 
-        <div className="w-full h-[600px] bg-white rounded-2xl">
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-none">
-              <thead>
-                <tr className="">
-                  <th className="border px-4 py-2">Name</th>
-                  <th className="border px-4 py-2">Points</th>
-                  <th className="border px-4 py-2">Lesson</th>
-                  <th className="border px-4 py-2">Status</th>
-                  <th className="border px-4 py-2">Study date</th>
-                  <th className="border px-4 py-2">Phone Number</th>
-                  <th className="border px-4 py-2">Balance</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="text-center">
-                  <td className="border px-4 py-2">sheroz turdiyev</td>
-                  <td className="border px-4 py-2">⭐ 0 points</td>
-                  <td className="border px-4 py-2">Biologiya TTS 17.00</td>
-                  <td className="border px-4 py-2 text-green-600">active</td>
-                  <td className="border px-4 py-2">2024-09-05</td>
-                  <td className="border px-4 py-2">+998939542111</td>
-                  <td className="border px-4 py-2">0</td>
-                </tr>
-                <tr className="text-center">
-                  <td className="border px-4 py-2">sheroz turdiyev</td>
-                  <td className="border px-4 py-2">⭐ 0 points</td>
-                  <td className="border px-4 py-2">
-                    3 Uroven RUSSIAN TTS 14 00
-                  </td>
-                  <td className="border px-4 py-2 text-green-600">active</td>
-                  <td className="border px-4 py-2">2024-12-14</td>
-                  <td className="border px-4 py-2">+998939542111</td>
-                  <td className="border px-4 py-2">0</td>
-                </tr>
-                <tr className="text-center">
-                  <td className="border px-4 py-2">Oybek Mirfayzullayev</td>
-                  <td className="border px-4 py-2">⭐ 0 points</td>
-                  <td className="border px-4 py-2">
-                    3 Uroven RUSSIAN TTS 14 00
-                  </td>
-                  <td className="border px-4 py-2 text-green-600">active</td>
-                  <td className="border px-4 py-2">2024-12-14</td>
-                  <td className="border px-4 py-2">+998939542111</td>
-                  <td className="border px-4 py-2">0</td>
-                </tr>
-                <tr className="text-center">
-                  <td className="border px-4 py-2">Oybek Mirfayzullayev</td>
-                  <td className="border px-4 py-2">⭐ 0 points</td>
-                  <td className="border px-4 py-2">3Ur Russian MWF 17:00</td>
-                  <td className="border px-4 py-2 text-green-600">active</td>
-                  <td className="border px-4 py-2">2025-01-10</td>
-                  <td className="border px-4 py-2">+998939542111</td>
-                  <td className="border px-4 py-2">0</td>
-                </tr>
-              </tbody>
-            </table>
+        <div className="w-full h-400px bg-white rounded-2xl">
+          <div className="p-3 max-h-[570px] overflow-y-auto">
+            <Table columns={columns} dataSource={data?.results || []} pagination={false} />
           </div>
         </div>
       </div>
