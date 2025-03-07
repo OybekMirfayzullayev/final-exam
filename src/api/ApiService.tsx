@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const ApiClient = createApi({
+    
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
         baseUrl: `https://test.api.mydays.uz`,
@@ -13,7 +14,7 @@ export const ApiClient = createApi({
         },
     }),
     endpoints: (builder) => ({
-        login: builder.mutation<{ token: string }, { username: string; password: any }>({
+        login: builder.mutation<AuthResponse, { username: string; password: string }>({
             query: (credentials) => ({
                 url: "/api/v1/auth/login/",
                 method: "POST",
@@ -40,3 +41,9 @@ export const ApiClient = createApi({
 });
 
 export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery, useGetClientsQuery } = ApiClient;
+export interface AuthResponse{
+    access: string;
+    refresh: string;
+    user_id: number;
+    user_role: string;
+}

@@ -20,11 +20,12 @@ export default function Login() {
       navigate("/");
     }
   }, [isAuth, navigate]);
-
+  
 
   const handleLogin = async () => {
     try {
       const response = await login(user_pass).unwrap();
+      console.log("Login response:", response);
       
       localStorage.setItem("token", response.access); 
       dispatch(setAuth({ is_auth: true }));
