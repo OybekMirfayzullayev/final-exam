@@ -32,15 +32,24 @@ export const ApiClient = createApi({
             }),
         }),
         getLeadList: builder.query({
-            query: () => "/api/v1/lead/list/?size=30",
+            query: () => "/api/v1/lead/list/?size=40",
         }),
         getClients:builder.query({
             query: () =>"/api/v1/student/list/"
-        })
+        }),
+        getSubjects: builder.query({
+            query: () => "/api/v1/course/subject-select"
+        }),
+        getTeachers: builder.query({
+            query: () => "/api/v1/employee/select-list"
+        }),
+        getLessonTime: builder.query({
+            query: () => "/api/v1/group/start-times"
+        }),
     }),
 });
 
-export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery, useGetClientsQuery } = ApiClient;
+export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery, useGetClientsQuery, useGetSubjectsQuery, useGetTeachersQuery, useGetLessonTimeQuery } = ApiClient;
 export interface AuthResponse{
     access: string;
     refresh: string;
