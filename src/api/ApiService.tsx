@@ -46,10 +46,17 @@ export const ApiClient = createApi({
         getLessonTime: builder.query({
             query: () => "/api/v1/group/start-times"
         }),
+        addLead:builder.mutation({
+            query: (newLead) => ({
+                url: "/api/v1/lead/create/",
+                method: "POST",
+                body: newLead,
+            }),
+        })
     }),
 });
 
-export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery, useGetClientsQuery, useGetSubjectsQuery, useGetTeachersQuery, useGetLessonTimeQuery } = ApiClient;
+export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery, useGetClientsQuery, useGetSubjectsQuery, useGetTeachersQuery, useGetLessonTimeQuery, useAddLeadMutation } = ApiClient;
 export interface AuthResponse{
     access: string;
     refresh: string;

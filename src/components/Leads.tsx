@@ -18,6 +18,7 @@ import {
 } from "../api/ApiService";
 import dayjs from "dayjs";
 import ErrorPage from "./ErrorPage";
+import { useAddLeadMutation } from "../api/ApiService";
 const { Option } = Select;
 
 interface Lead {
@@ -110,15 +111,51 @@ const LeadList: FC<LeadListProps> = ({ status, title }) => {
 export default function Leads() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: subjects } = useGetSubjectsQuery(undefined);
-  const { data: teachers } = useGetTeachersQuery(undefined);
   const { data: lessonTimes } = useGetLessonTimeQuery(undefined);
+  const { data: teachers } = useGetTeachersQuery(undefined);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+998");
   const [subject, setSubject] = useState("");
-
   const isFormValid = firstName && lastName && phone && subject;
+  const [lessonType, setLessonType] = useState("");
+  const [teacher, setTeacher] = useState<number | null>(null);
+  const [source, setSource] = useState<number | null>(null);
+  const [lessonTime, setLessonTime] = useState<number | null>(null);
+
+  const [createLead, { isLoading }] = useAddLeadMutation(undefined);
+  const { refetch } = useGetLeadListQuery(undefined);
+
+
+  const handleConfirm = async () => {
+    try {
+      const response = await createLead({
+        first_name: firstName,
+        last_name: lastName,
+        phone,
+        subject,
+        lesson_type: lessonType,
+        teacher: teacher,
+        lesson_time: lessonTime,
+        source: source,
+        branch: null,
+        lead_type: "lead",
+        is_active: true,
+      }).unwrap();
+
+      console.log("Lead yaratildi:", response);
+
+      setIsModalOpen(false);
+      setFirstName("");
+      setLastName("");
+      setPhone("");
+      setSubject("");
+      refetch();
+    } catch (err) {
+      console.error("Xatolik:", err);
+    }
+  };
 
   return (
     <>
@@ -157,13 +194,23 @@ export default function Leads() {
                 <label className="text-[#334d6e] text-[12px] font-semibold">
                   First name
                 </label>
-                <Input placeholder="First name" className="h-[40px]" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                <Input
+                  placeholder="First name"
+                  className="h-[40px]"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
               </div>
               <div>
                 <label className="text-[#334d6e] text-[12px] font-semibold">
                   Last name
                 </label>
-                <Input placeholder="Last name" className="h-[40px]" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+                <Input
+                  placeholder="Last name"
+                  className="h-[40px]"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
               </div>
               <div>
                 <label className="text-[#334d6e] text-[12px] font-semibold">
@@ -172,8 +219,16 @@ export default function Leads() {
                 <Input
                   placeholder="Phone number"
                   className="h-[40px]"
-                  prefix="+998"
-                  value={phone} onChange={(e) => setPhone(e.target.value)}
+                  value={phone}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    if (
+                      /^\+998\d*$/.test(inputValue) ||
+                      inputValue === "+998"
+                    ) {
+                      setPhone(inputValue);
+                    }
+                  }}
                 />
               </div>
               <div>
@@ -185,7 +240,8 @@ export default function Leads() {
                   className="w-full h-[40px]"
                   suffixIcon={<DownOutlined />}
                   size="large"
-                  value={subject} onChange={(value) => setSubject(value)}
+                  value={subject}
+                  onChange={(value) => setSubject(value)}
                 >
                   {subjects?.map((data: any) => (
                     <Option key={data.id} value={data.id}>
@@ -208,6 +264,8 @@ export default function Leads() {
                   className="w-full h-[40px]"
                   suffixIcon={<DownOutlined />}
                   size="large"
+                  value={lessonType}
+                  onChange={(value) => setLessonType(value)}
                 >
                   <Option value="individual">Individual</Option>
                   <Option value="group">Group</Option>
@@ -222,6 +280,8 @@ export default function Leads() {
                   className="w-full h-[40px]"
                   suffixIcon={<DownOutlined />}
                   size="large"
+                  value={teacher}
+                  onChange={(value) => setTeacher(value)}
                 >
                   {teachers?.map((data: any) => (
                     <Option key={data.id} value={data.id}>
@@ -238,10 +298,12 @@ export default function Leads() {
                   placeholder="Select lesson time"
                   className="w-full h-[40px]"
                   suffixIcon={<DownOutlined />}
+                  value={lessonTime}
+                  onChange={(value) => setLessonTime(value)}
                   size="large"
                 >
                   {lessonTimes?.map((data: any) => (
-                    <Option key={data.id} value={data.id}>
+                    <Option key={data.id} value={data.start_time}>
                       {data.start_time}
                     </Option>
                   ))}
@@ -256,9 +318,16 @@ export default function Leads() {
                   className="w-full h-[40px]"
                   suffixIcon={<DownOutlined />}
                   size="large"
+                  value={source}
+                  onChange={(value) => setSource(value)}
                 >
-                  <Option value="website">Website</Option>
-                  <Option value="referral">Referral</Option>
+                  <Option value={0}>Website</Option>
+                  <Option value={1}>Instagram</Option>
+                  <Option value={2}>Facebook</Option>
+                  <Option value={3}>Twitter</Option>
+                  <Option value={4}>Recommendation</Option>
+                  <Option value={5}>Friend</Option>
+                  <Option value={6}>Other</Option>
                 </Select>
               </div>
             </div>
@@ -274,8 +343,9 @@ export default function Leads() {
                 type="primary"
                 className="h-[40px] w-[100px]"
                 disabled={!isFormValid}
+                onClick={handleConfirm}
               >
-                Confirm
+                {isLoading ? <Spin /> : "Confirm"}
               </Button>
             </div>
           </Modal>
