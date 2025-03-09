@@ -109,11 +109,13 @@ const LeadList: FC<LeadListProps> = ({ status, title }) => {
 };
 
 export default function Leads() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: subjects } = useGetSubjectsQuery(undefined);
   const { data: lessonTimes } = useGetLessonTimeQuery(undefined);
   const { data: teachers } = useGetTeachersQuery(undefined);
-
+  const [createLead, { isLoading }] = useAddLeadMutation(undefined);
+  const { refetch } = useGetLeadListQuery(undefined);
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("+998");
@@ -124,8 +126,6 @@ export default function Leads() {
   const [source, setSource] = useState<number | null>(null);
   const [lessonTime, setLessonTime] = useState<number | null>(null);
 
-  const [createLead, { isLoading }] = useAddLeadMutation(undefined);
-  const { refetch } = useGetLeadListQuery(undefined);
 
 
   const handleConfirm = async () => {

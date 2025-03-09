@@ -1,4 +1,4 @@
-// import React from 'react'
+import React, { useState } from "react";
 import {
   Button,
   DatePicker,
@@ -10,25 +10,30 @@ import {
   Spin,
   Table,
   Tag,
+  message
 } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ErrorPage from "./ErrorPage";
-import { useState } from "react";
 import {
   useGetClientsQuery,
   useGetSubjectsQuery,
   useGetTeachersQuery,
   useGetLevelQuery,
   useGetGroupListQuery,
+  useAddStudentMutation
 } from "../api/ApiService";
-import { Option } from "antd/es/mentions";
+// import { Option } from "antd/es/mentions";
+import moment, { Moment } from "moment";
+
+const { Option } = Select;
 
 export default function Clients() {
-  const { data, error, isLoading } = useGetClientsQuery(undefined);
+  const { data, error, isLoading, refetch } = useGetClientsQuery(undefined);
   const { data: teachers } = useGetTeachersQuery(undefined);
   const { data: subjects } = useGetSubjectsQuery(undefined);
   const { data: levels } = useGetLevelQuery(undefined);
   const { data: groups } = useGetGroupListQuery(undefined);
+  const [addStudent] = useAddStudentMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSecondModalVisible, setIsSecondModalVisible] = useState(false);
@@ -39,6 +44,17 @@ export default function Clients() {
   const [selectedLessonType, setSelectedLessonType] = useState<string | null>(
     null
   );
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    birthday: null,
+    discount: 0,
+    discountType: "UZS",
+    startDate: null,
+    days:null,
+    firstMonthDiscount: false
+  });
 
   if (isLoading)
     return (
@@ -48,6 +64,48 @@ export default function Clients() {
       </Flex>
     );
   if (error) return <ErrorPage />;
+
+  const handleInputChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleDateChange = (date: Moment | null, field: string) => {
+    setFormData({ ...formData, [field]: date });
+  };
+
+  const handleSelectChange = (value: any, field: string) => {
+    setFormData({ ...formData, [field]: value });
+  };
+
+  const handleAddStudent = async () => {
+    try {
+      await addStudent({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone_number_1: formData.phoneNumber,
+        birthday: formData.birthday ? moment(formData.birthday).format('YYYY-MM-DD'): null,
+        group_type: selectedLessonType,
+        days: formData.days,
+        discount_first_month: formData.firstMonthDiscount,
+        finance_type: "cash",
+        start_date: formData.startDate ? moment(formData.startDate).format('YYYY-MM-DD'): null,
+        branch: 1,
+        subject,
+        level,
+        teacher,
+        monthly_discount: formData.discount,
+        first_month_discount: formData.discount,
+        group_id: selectedGroup,
+        calculation_type: 6
+      }).unwrap();
+      message.success("Student added successfully");
+      refetch();
+      setIsSecondModalVisible(false);
+    } catch (error) {
+      message.error("Failed to add student");
+    }
+  };
 
   const columns = [
     { title: "Name", dataIndex: "full_name", key: "full_name" },
@@ -143,13 +201,21 @@ export default function Clients() {
               <label className="text-[#334d6e] text-[12px] font-semibold">
                 First name*
               </label>
-              <Input placeholder="First name" />
+              <Input
+                placeholder="First name"
+                name="firstName"
+                onChange={handleInputChange}
+              />
             </div>
             <div>
               <label className="text-[#334d6e] text-[12px] font-semibold">
                 Last name*
               </label>
-              <Input placeholder="Last name" />
+              <Input
+                placeholder="Last name"
+                name="lastName"
+                onChange={handleInputChange}
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -157,13 +223,22 @@ export default function Clients() {
               <label className="text-[#334d6e] text-[12px] font-semibold">
                 Phone number*
               </label>
-              <Input placeholder="Phone number" prefix="+998" />
+              <Input
+                placeholder="Phone number"
+                prefix="+998"
+                name="phoneNumber"
+                onChange={handleInputChange}
+              />
             </div>
             <div>
               <label className="text-[#334d6e] text-[12px] font-semibold">
                 Birthday*
               </label>
-              <DatePicker className="w-full" placeholder="Select date" />
+              <DatePicker
+                className="w-full"
+                placeholder="Select date"
+                onChange={(date) => handleDateChange(date, "birthday")}
+              />
             </div>
           </div>
           <div>
@@ -269,9 +344,13 @@ export default function Clients() {
               <label className="text-[#334d6e] text-[12px] font-semibold">
                 Select days
               </label>
-              <Select className="w-full" placeholder="Select">
-                <option value={1}>Juft</option>
-                <option value={2}>Toq</option>
+              <Select
+                className="w-full"
+                placeholder="Select"
+                onChange={(value) => handleSelectChange(value, "days")}
+              >
+                <Option value={1}>Juft</Option>
+                <Option value={2}>Toq</Option>
               </Select>
             </div>
           </div>
@@ -323,13 +402,25 @@ export default function Clients() {
                 <label className="text-[#334d6e] text-[12px] font-semibold">
                   Monthly discount
                 </label>
-                <Input type="number" placeholder="Amount" className="w-full" />
+                <Input
+                  type="number"
+                  placeholder="Amount"
+                  className="w-full"
+                  name="discount"
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="w-1/3">
                 <label className="invisible">Currency</label>
-                <Select className="" defaultValue="UZS">
-                  <Select.Option value="UZS">So'm</Select.Option>
-                  <Select.Option value="%">%</Select.Option>
+                <Select
+                  className=""
+                  defaultValue="UZS"
+                  onChange={(value) =>
+                    handleSelectChange(value, "discountType")
+                  }
+                >
+                  <Option value="UZS">So'm</Option>
+                  <Option value="%">%</Option>
                 </Select>
               </div>
             </div>
@@ -338,11 +429,25 @@ export default function Clients() {
               <label className="text-[#334d6e] text-[12px] font-semibold">
                 Select start day*
               </label>
-              <DatePicker className="w-full" placeholder="Select date" />
+              <DatePicker
+                className="w-full"
+                placeholder="Select date"
+                onChange={(date) => handleDateChange(date, "startDate")}
+              />
             </div>
 
             <div className="flex items-center space-x-2">
-              <Radio>Discount for the first month</Radio>
+              <Radio
+                checked={formData.firstMonthDiscount}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    firstMonthDiscount: e.target.checked,
+                  })
+                }
+              >
+                Discount for the first month
+              </Radio>
             </div>
           </div>
 
@@ -357,7 +462,7 @@ export default function Clients() {
             </Button>
             <Button
               type="primary"
-              onClick={() => setIsSecondModalVisible(false)}
+              onClick={handleAddStudent}
             >
               Confirm
             </Button>

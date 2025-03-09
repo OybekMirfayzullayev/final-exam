@@ -58,11 +58,18 @@ export const ApiClient = createApi({
                 method: "POST",
                 body: newLead,
             }),
-        })
+        }),
+        addStudent:builder.mutation({
+            query: (newStudent) => ({
+                url: "/api/v1/student/create/",
+                method: "POST",
+                body: newStudent,
+            }),
+        }),
     }),
 });
 
-export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery, useGetClientsQuery, useGetSubjectsQuery, useGetTeachersQuery, useGetLessonTimeQuery, useAddLeadMutation, useGetLevelQuery, useGetGroupListQuery } = ApiClient;
+export const { useLoginMutation, useGetUserQuery, useUpdateUserMutation, useGetLeadListQuery, useGetClientsQuery, useGetSubjectsQuery, useGetTeachersQuery, useGetLessonTimeQuery, useAddLeadMutation, useGetLevelQuery, useGetGroupListQuery, useAddStudentMutation } = ApiClient;
 export interface AuthResponse{
     access: string;
     refresh: string;
