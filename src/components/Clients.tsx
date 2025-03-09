@@ -31,10 +31,14 @@ export default function Clients() {
   const { data: groups } = useGetGroupListQuery(undefined);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSecondModalVisible, setIsSecondModalVisible] = useState(false);
   const [subject, setSubject] = useState("");
   const [teacher, setTeacher] = useState<number | null>(null);
   const [level, setLevel] = useState("");
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [selectedLessonType, setSelectedLessonType] = useState<string | null>(
+    null
+  );
 
   if (isLoading)
     return (
@@ -104,7 +108,6 @@ export default function Clients() {
             New Student
           </Button>
         </div>
-
         <div className="w-full h-400px bg-white rounded-2xl">
           <div className="p-3 max-h-[570px] overflow-y-auto">
             <Table
@@ -116,10 +119,16 @@ export default function Clients() {
         </div>
       </div>
 
+      {/* First modal */}
       <Modal
         title={
-          <div className="text-2xl font-bold text-[#334d6e] text-center">
-            Add a new student
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-[#334d6e]">
+              Add a new student
+            </h1>
+            <p className="text-[#90A0B7] text-[14px] font-normal">
+              Fill in the requested information below
+            </p>
           </div>
         }
         visible={isModalVisible}
@@ -161,12 +170,49 @@ export default function Clients() {
             <label className="text-[#334d6e] text-[12px] font-semibold">
               Select type of lesson*
             </label>
-            <Radio.Group className="w-full flex justify-start space-x-6">
+            <Radio.Group
+              className="w-full flex justify-start space-x-6"
+              value={selectedLessonType}
+              onChange={(e) => setSelectedLessonType(e.target.value)}>
               <Radio value="individual">Individual lesson</Radio>
               <Radio value="group">Group lesson</Radio>
             </Radio.Group>
           </div>
 
+          <div className="flex justify-end mt-4">
+            <Button
+              type="primary"
+              onClick={() => {
+                if (selectedLessonType) {
+                  setIsModalVisible(false);
+                  setIsSecondModalVisible(true);
+                }
+              }}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Second modal */}
+      <Modal
+        title={
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-[#334d6e]">
+              Add a new student
+            </h1>
+            <p className="text-[#90A0B7] text-[14px] font-normal">
+              Fill in the requested information below
+            </p>
+          </div>
+        }
+        visible={isSecondModalVisible}
+        onCancel={() => setIsSecondModalVisible(false)}
+        footer={null}
+        centered
+      >
+        <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-[#334d6e] text-[12px] font-semibold">
@@ -277,7 +323,7 @@ export default function Clients() {
                 <label className="text-[#334d6e] text-[12px] font-semibold">
                   Monthly discount
                 </label>
-                <Input type="text" placeholder="0" className="w-full" />
+                <Input type="number" placeholder="Amount" className="w-full" />
               </div>
               <div className="w-1/3">
                 <label className="invisible">Currency</label>
@@ -300,8 +346,19 @@ export default function Clients() {
             </div>
           </div>
 
-          <div className="flex justify-end mt-4">
-            <Button type="primary" onClick={() => setIsModalVisible(false)}>
+          <div className="flex justify-end mt-7 gap-3">
+            <Button
+              onClick={() => {
+                setIsSecondModalVisible(false);
+                setIsModalVisible(true);
+              }}
+            >
+              Go Back
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => setIsSecondModalVisible(false)}
+            >
               Confirm
             </Button>
           </div>
