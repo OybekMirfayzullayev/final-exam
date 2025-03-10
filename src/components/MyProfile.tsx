@@ -1,62 +1,67 @@
-// import React from 'react'
-import { Upload, Avatar, Button, Typography } from "antd";
-import { UserOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
+import { Upload, Avatar, Button, Typography, Form, Input, message } from "antd";
 import { useGetUserQuery, useUpdateUserMutation } from "../api/ApiService";
 
 export default function MyProfile() {
-  const [updateUser] = useUpdateUserMutation();
-  const { data: userData, refetch } = useGetUserQuery({});
+  const { data, isLoading, refetch } = useGetUserQuery("");
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateUserMutation();
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    role: "",
-    imageUrl: null as string | null,
-  });
+  const [form] = Form.useForm();
+  const [profPhoto, setProfPhoto] = useState<File | null>(null);
+  const [profileAvatar, setProfileAvatar] = useState<string>("");
 
   useEffect(() => {
-    
-    if (userData) {
-        setFormData({
-            firstName: userData.first_name || "",
-            lastName: userData.last_name || "",
-            phone: userData.phone_number_1 || "",
-            role: userData.user?.user_role || "",
-            imageUrl: userData.image_url || "",
-    });
-}
+    if (data) {
+      form.setFieldsValue({
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phone_number_1: data.phone_number_1,
+        user_role: data.user?.user_role,
+      });
+      setProfileAvatar(data.profile_photo || "/default-avatar.png");
+    }
+  }, [data, form]);
 
-}, [userData]);
-
-  const handleChange = (e:any) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const uploadProps = {
+    beforeUpload: (file: File) => {
+      setProfPhoto(file);
+      const imageUrl = URL.createObjectURL(file);
+      setProfileAvatar(imageUrl);
+      message.success("Image selected successfully!");
+      return false;
+    },
   };
 
-  const handleUpload = (info: any) => {
-    const file = info.file;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFormData({ ...formData, imageUrl: reader.result as string });
-    };
-    reader.readAsDataURL(file);
-  };
+  interface ProfileFormValues {
+    first_name: string;
+    last_name: string;
+    phone_number_1: string;
+    user_role: string;
+  }
 
-  const handleSubmit = async (e:any) => {
-    e.preventDefault();
+  const handleSave = async (values: ProfileFormValues) => {
+    const formData = new FormData();
+    formData.append("first_name", values.first_name);
+    formData.append("last_name", values.last_name);
+    formData.append("phone_number_1", values.phone_number_1);
+    formData.append("user_role", values.user_role);
+
+    if (profPhoto) {
+      formData.append("profile_photo", profPhoto);
+    }
+
     try {
-      await updateUser(formData).unwrap();
-      alert("Profile updated successfully!");
-      await refetch();
-      setFormData({ ...formData });
-      console.log("After refetch:", userData);
+      await updateProfile(formData).unwrap();
+      message.success("Profile updated successfully!");
+      setProfPhoto(null);
+      refetch();
     } catch (error) {
-      alert("Failed to update profile!");
+      message.error("Error while updating the profile.");
     }
   };
 
-    
+  if (isLoading) return <p>Loading...</p>;
+
   return (
     <section className="w-[1200px] h-auto bg-white rounded-2xl p-5">
       <h1 className="text-[#192A3E] font-semibold">Profile</h1>
@@ -65,8 +70,7 @@ export default function MyProfile() {
         <div className="flex flex-col items-center pt-3">
           <Avatar
             size={85}
-            src=""
-            icon={<UserOutlined />}
+            src={profileAvatar}
             className="bg-blue-600 text-white text-lg"
           />
         </div>
@@ -75,12 +79,7 @@ export default function MyProfile() {
           <Typography.Text className="mt-4 mb-2 text-gray-700 font-medium">
             File Upload Label Link
           </Typography.Text>
-
-          <Upload
-            showUploadList={false}
-            beforeUpload={() => false}
-            onChange={handleUpload}
-          >
+          <Upload {...uploadProps} showUploadList={false}>
             <div className="border border-gray-300 rounded-lg p-3 text-center cursor-pointer bg-gray-50 hover:border-blue-500">
               <p className="text-gray-500">
                 Drag and drop here or{" "}
@@ -90,67 +89,61 @@ export default function MyProfile() {
           </Upload>
         </div>
 
-        <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">First Name</label>
-            <input
-              type="text"
+        <Form className="mt-5 space-y-4" form={form} onFinish={handleSave} layout="vertical">
+          <div className="w-[350px]">
+
+          <Form.Item
+            name="first_name"
+            label="First Name"
+            rules={[{ required: true, message: "Please enter your first name" }]}>
+            <Input
               placeholder="First Name"
-              className="w-[245px] h-[47px] border border-[#C2CFE0] outline-none p-2 rounded-lg"
-              value={formData.firstName}
-              onChange={handleChange}
-              name="firstName"
-              required
+              size="large"
             />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Last Name</label>
-            <input
-              type="text"
-              placeholder="Enter last name"
-              className="w-[245px] h-[47px] border border-[#C2CFE0] outline-none p-2 rounded-lg"
-              value={formData.lastName}
-              onChange={handleChange}
-              name="lastName"
-              required
+          </Form.Item>
+          <Form.Item
+            name="last_name"
+            label="Last Name"
+            rules={[{ required: true, message: "Please enter your last name" }]}
+          >
+            <Input
+              placeholder="Last Name"
+              size="large"
             />
-          </div>
+          </Form.Item>
 
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Phone Number</label>
-            <input
-              type="text"
+          <Form.Item
+            name="phone_number_1"
+            label="Phone Number"
+            rules={[
+              { required: true, message: "Please enter your phone number" },
+              { pattern: /^\+998\d{9}$/, message: "The phone number entered is not valid." },
+            ]}
+          >
+            <Input
               placeholder="+998"
-              className="w-[245px] h-[47px] border border-[#C2CFE0] outline-none p-2 rounded-lg"
-              value={formData.phone}
-              onChange={handleChange}
-              name="phone"
-              required
+              size="large"
             />
-          </div>
+          </Form.Item>
 
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">
-              Who is the employee?
-            </label>
-            <input
-              type="text"
+          <Form.Item
+            name="user_role"
+            label="Who is the employee?"
+          >
+            <Input
               placeholder="Example: founder or marketer..."
-              className="w-[245px] h-[47px] border border-[#C2CFE0] outline-none p-2 rounded-lg"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
+              size="large"
             />
+          </Form.Item>
           </div>
 
           <div className="flex justify-end gap-3">
-            <Button >Cancel</Button>
-            <Button type="primary"  htmlType="submit" className="bg-blue-600">
+            <Button onClick={() => form.resetFields()}>Cancel</Button>
+            <Button type="primary" htmlType="submit" className="bg-blue-600" loading={isUpdating}>
               Save
             </Button>
           </div>
-        </form>
+        </Form>
       </div>
     </section>
   );

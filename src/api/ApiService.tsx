@@ -27,7 +27,7 @@ export const ApiClient = createApi({
         updateUser: builder.mutation({
             query: (userData) => ({
               url: "/api/v1/user/me/",
-              method: "PUT",
+              method: "PATCH",
               body: userData,
             }),
         }),
