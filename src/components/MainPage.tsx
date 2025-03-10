@@ -5,6 +5,8 @@ import { FiUser } from "react-icons/fi";
 import { GiCoins } from "react-icons/gi";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { Table, Tag } from "antd";
+
 
 export default function MainPage() {
   const options: ApexOptions = {
@@ -126,6 +128,44 @@ export default function MainPage() {
     colors: ["#FFB946"],
   };
   const progressSeriesYellow = [21];
+
+
+
+  const columns = [
+    { title: "#", dataIndex: "id", key: "id" },
+    { title: "Lesson time", dataIndex: "time", key: "time", render: (text:any) => <Tag color="blue">{text}</Tag> },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Teacher name", dataIndex: "teacher", key: "teacher" },
+    { title: "Subject name: level", dataIndex: "subject", key: "subject" },
+    { title: "Lesson type", dataIndex: "type", key: "type" },
+    { title: "Room", dataIndex: "room", key: "room", render: (text:any) => <Tag color="blue">{text}</Tag> },
+    { title: "Students", dataIndex: "students", key: "students" },
+  ];
+  
+  const data = [
+    { id: 1, time: "09:00 - 10:00", name: "Oybek", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Group", room: "Room 2-3", students: "18 students" },
+    { id: 2, time: "09:00 - 10:00", name: "Aboos", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Individual", room: "Room 2-3", students: "1 student" },
+    { id: 3, time: "09:00 - 10:00", name: "Shohjahon", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Group", room: "Room 2-3", students: "18 students" },
+    { id: 4, time: "09:00 - 10:00", name: "Ali", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Individual", room: "Room 2-3", students: "1 student" },
+    { id: 5, time: "09:00 - 10:00", name: "Javohir", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Group", room: "Room 2-3", students: "18 students" },
+    { id: 6, time: "09:00 - 10:00", name: "Nodirbek", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Individual", room: "Room 2-3", students: "1 student" },
+    { id: 7, time: "09:00 - 10:00", name: "Oybek", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Individual", room: "Room 2-3", students: "1 student" },
+    { id: 8, time: "09:00 - 10:00", name: "Alex", teacher: "Mr. Johnson", subject: "General English: Intermediate level", type: "Individual", room: "Room 2-3", students: "1 student" },
+  ];
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <main>
@@ -303,9 +343,9 @@ export default function MainPage() {
         </div>
 
 
-        {/* <div className="w-full h-[500px]">
-
-        </div> */}
+        <div className="w-full h-auto">
+          <Table columns={columns} dataSource={data} pagination={false} scroll={{ y: 400 }}/>
+        </div>
 
 
       </div>
