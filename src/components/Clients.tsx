@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
   DatePicker,
@@ -22,8 +22,8 @@ import {
   useGetGroupListQuery,
   useAddStudentMutation
 } from "../api/ApiService";
-// import { Option } from "antd/es/mentions";
-import moment, { Moment } from "moment";
+import moment from "moment";
+import { Dayjs } from "dayjs";
 
 const { Option } = Select;
 
@@ -70,7 +70,7 @@ export default function Clients() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleDateChange = (date: Moment | null, field: string) => {
+  const handleDateChange = (date: Dayjs | null, field: string) => {
     setFormData({ ...formData, [field]: date });
   };
 
